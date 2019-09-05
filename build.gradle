@@ -1,0 +1,48 @@
+plugins {
+	id 'org.springframework.boot' version '2.1.7.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+	id 'java'
+}
+
+group = 'hu.mt.dpt.apitest'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '12'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'junit', module: 'junit'
+	}
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.1'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.1'
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+}
+
+test{
+	useJUnitPlatform()
+
+	systemProperty("spring.profiles.active", project.properties.get("springProfiles"))
+
+	testLogging {
+		events = [ 'standardOut', 'PASSED', 'FAILED', 'SKIPPED']
+	}
+
+	afterSuite { desc, result ->
+		if (!desc.parent) {
+			println "\nTest result is: ${result.resultType}"
+			println "Test summary: " +
+					"${result.testCount} tests completed, " +
+					"${result.successfulTestCount} succeeded, " +
+					"${result.failedTestCount} failed, " +
+					"${result.skippedTestCount} skipped."
+		}
+	}
+}
